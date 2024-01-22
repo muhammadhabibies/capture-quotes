@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML CSS JS ONSEN UI</title>
+    <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/onsenui/css/onsen-css-components.min.css"
+    />
+    <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  </head>
+
+  <style>
+    #result {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      row-gap: 30px;
+      min-height: 90vh;
+    }
+    #activity {
+      font-size: 2em;
+      font-weight: 800;
+      text-align: center;
+    }
+    #type {
+      background-color: crimson;
+      font-size: 24px;
+      font-weight: 600;
+      color: white;
+      padding: 8px 16px;
+      display: none;
+    }
+  </style>
+
+  <body>
+    <ons-page>
+      <ons-toolbar>
+        <div class="center">CAPTURE QUOTES</div>
+        <div class="right">
+          <ons-toolbar-button>
+            <a download id="screenshoot">📷</a>
+          </ons-toolbar-button>
+        </div>
+      </ons-toolbar>
+
+      <ons-fab position="bottom right" onclick="generateIdea()">
+        <ons-icon icon="md-plus"></ons-icon>
+      </ons-fab>
+
+      <div id="result">
+        <div id="activity"></div>
+        <div id="type"></div>
+      </div>
+    </ons-page>
+
+    <script>
+      const a = "10";
+      const generateIdea = async () => {
+        const resultElement = document.getElementById("result");
+        const activityElement = document.getElementById("activity");
+        const typeElement = document.getElementById("type");
+        const ssElement = document.getElementById("screenshoot");
+
+        const response = await fetch("https://www.boredapi.com/api/activity");
+        const { activity, type } = await response.json();
+
+        activityElement.textContent = activity;
+        typeElement.textContent = type;
+        typeElement.style.display = "block";
+
+        let count = 0;
+        ssElement.addEventListener("click", async () => {
+          count && location.reload();
+
+          const canvas = await html2canvas(resultElement);
+          ssElement.setAttribute("href", canvas.toDataURL("image/png"));
+          ssElement.textContent = "📥";
+          count = 1;
+        });
+      };
+    </script>
+  </body>
+</html>
